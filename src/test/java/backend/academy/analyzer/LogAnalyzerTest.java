@@ -1,6 +1,5 @@
 package backend.academy.analyzer;
 
-import java.nio.file.Path;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +32,7 @@ public class LogAnalyzerTest {
     }
 
     @Test
-    void testAnalyzeURILocalLogFile() throws Exception {
+    void testAnalyzeURILocalLogFile() {
         when(parser.stringPaths()).thenReturn(
             List.of("file:///" + System.getProperty("user.dir") + "/src/test/logs/test_logs.log"));
         config = new Config(parser);

@@ -95,5 +95,5 @@ public abstract class FileReportGenerator {
             log.error("Failed to generate report file: {}", e.getMessage());
         }
         log.info(description + path.toAbsolutePath());
-    };
+    }
 }

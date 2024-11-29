@@ -20,10 +20,7 @@ public class DateTimeConverter {
     }
 
     public static LocalDateTime convertArgumentDateTime(String dateTime) {
-        LocalDateTime result = tryParseDateTime(dateTime);
-        if (result == null) {
-            result = tryParseDate(dateTime);
-        }
+        LocalDateTime result = tryParseDateTimeOrDate(dateTime);
 
         if (result == null) {
             throw new DateTimeParseException("Invalid date format: " + dateTime, dateTime, 0);
@@ -31,20 +28,16 @@ public class DateTimeConverter {
         return result;
     }
 
-    private static LocalDateTime tryParseDateTime(String dateTime) {
+    private static LocalDateTime tryParseDateTimeOrDate(String dateTimeOrDate) {
         try {
-            return LocalDateTime.parse(dateTime, ISO_DATE_TIME_FORMATTER);
+            return LocalDateTime.parse(dateTimeOrDate, ISO_DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
-
-    private static LocalDateTime tryParseDate(String date) {
-        try {
-            LocalDate localDate = LocalDate.parse(date, ISO_LOCAL_DATE_FORMATTER);
-            return localDate.atStartOfDay();
-        } catch (DateTimeParseException e) {
-            return null;
+            try {
+                LocalDate localDate = LocalDate.parse(dateTimeOrDate, ISO_LOCAL_DATE_FORMATTER);
+                return localDate.atStartOfDay();
+            } catch (DateTimeParseException ex) {
+                return null;
+            }
         }
     }
 }

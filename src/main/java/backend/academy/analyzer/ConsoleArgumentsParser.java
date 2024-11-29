@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 public class ConsoleArgumentsParser {
-    @Parameter(names = "--path", description = "Path to one or more NGINX log files", required = true,
+    @Parameter(names = "--path", description = "Relative glob path or url to one or more NGINX log files",
+        required = true,
         variableArity = true)
     private List<String> stringPaths;
 

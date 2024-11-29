@@ -3,6 +3,7 @@ package backend.academy.analyzer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -90,10 +91,11 @@ public abstract class FileReportGenerator {
 
     protected void createFile(Path path, String reportBuilder, String description) {
         try {
+            Files.createDirectories(Paths.get("reports"));
             Files.writeString(path, reportBuilder, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            log.info("{}{}", description, path.toAbsolutePath());
         } catch (IOException e) {
             log.error("Failed to generate report file: {}", e.getMessage());
         }
-        log.info(description + path.toAbsolutePath());
     }
 }

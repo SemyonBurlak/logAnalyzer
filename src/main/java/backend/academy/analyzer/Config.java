@@ -34,7 +34,7 @@ public class Config {
     private final static Pattern URL_PATH_PATTERN =
         Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]$");
     private final static Pattern LOCAL_PATH_PATTERN =
-        Pattern.compile("^(?<baseDir>[^/]+)(/[^/]+)*$");
+        Pattern.compile("^(?<baseDir>[^/\\\\]+)([/\\\\][^/\\\\]+)*$"); // relative glob to files
 
     private final ConsoleArgumentsParser parser;
 
@@ -94,11 +94,10 @@ public class Config {
     private void resolvePaths(List<String> stringPathList) throws IOException, URISyntaxException {
         for (String path : stringPathList) {
             Matcher urlMatcher = URL_PATH_PATTERN.matcher(path);
-            Matcher localPathMatcher = LOCAL_PATH_PATTERN.matcher(path);
             if (urlMatcher.matches()) {
                 log.info("Resolved URI: {}", path);
                 uriList.add(new URI(path));
-            } else if (localPathMatcher.matches()) {
+            } else {
                 log.info("Resolving glob: {}", path);
                 resolveGlob(path);
             }
@@ -109,13 +108,12 @@ public class Config {
         Matcher localPathMatcher = LOCAL_PATH_PATTERN.matcher(glob);
 
         if (!localPathMatcher.matches()) {
-            log.error("Invalid local path pattern: {}", glob);
-            return;
+            log.error("Path not correct: {}", glob);
         }
 
         Path baseDir = Paths.get(localPathMatcher.group("baseDir"));
 
-        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
+        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + glob.replaceAll("\\\\", "/"));
 
         Files.walkFileTree(baseDir, new SimpleFileVisitor<>() {
             @Override
